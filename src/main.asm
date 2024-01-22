@@ -70,7 +70,11 @@ save_sram_to_flash:
 	ld		a, BANK(erase_and_write_ram_banks)
 	ld		[$2000], a
 	call	erase_and_write_ram_banks
-	ld		a, [_current_game_bank]
+	IF GAME_ENGINE_CURRENT_BANK_OFFSET >= _HRAM
+		ldh		a, [_current_game_bank]
+	ELSE
+		ld		a, [_current_game_bank]
+	ENDC
 	ld		[$2000], a
 	pop		hl
 	pop		de
