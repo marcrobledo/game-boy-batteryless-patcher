@@ -20,10 +20,10 @@ Thanks to BennVennElectronic and Lesserkuma for their help!
 How to
 ------
 1. Get [RGBDS](https://rgbds.gbdev.io/install) and unzip it at `rgbds` folder.
-2. Place the game you are going to patch as `src/input.gbc` file.
+2. Place the game you are going to patch as `roms/input.gbc` file.
 3. Read `src/settings.asm` carefully and edit it, filling all needed offsets and constants for your game.
 4. Compile with `assemble.bat` (Windows) or `assemble.sh` (Unix).
-5. If there were no errors, a ROM `src/output.gbc` will be created.
+5. If there were no errors, a ROM `roms/output.gbc` will be created.
 6. Flash your bootleg cartridge with the new generated ROM.
 
 Note: when saving, the game might freeze a few frames. This is normal, it's just the cheap Flash ROM chip doing its magic!
