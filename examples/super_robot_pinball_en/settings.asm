@@ -1,6 +1,9 @@
-; Battery-less patch for Super Robot Pinball (english translation)
-; (find translation here: https://www.romhacking.net/translations/6402/)
-; embeds my own 100% savegame
+; ------------------------------------------------------------------------------
+;         Battery-less patch for Super Robot Pinball (english translation)
+;      (find translation here: https://www.romhacking.net/translations/6402/)
+;
+;      both settings.asm and embed_savegame.sav files must be placed at src/
+; ------------------------------------------------------------------------------
 
 
 
@@ -11,15 +14,15 @@
 ; savegame.
 ; Uncomment the following constants if you want to manually specify cartridge
 ; type and/or size:
-; CHANGE_CART_TYPE EQU CART_ROM_MBC5_RAM_BAT
-; CHANGE_CART_SIZE EQU CART_ROM_2048KB ;128 banks
+; DEF CHANGE_CART_TYPE EQU CART_ROM_MBC5_RAM_BAT
+; DEF CHANGE_CART_SIZE EQU CART_ROM_2048KB ;128 banks
 
 
 
 ; SRAM ORIGINAL SIZE
 ; ------------------
 ; Set to 1 if game's original SRAM is 32kb
-SRAM_SIZE_32KB EQU 0
+DEF SRAM_SIZE_32KB EQU 0
 
 
 
@@ -27,7 +30,7 @@ SRAM_SIZE_32KB EQU 0
 ; ----------------
 ; Put here the game's boot jp offset found in in 0:0101.
 ; Usually $0150, but could be different depending on game.
-GAME_BOOT_OFFSET EQU $0150
+DEF GAME_BOOT_OFFSET EQU $0150
 
 
 
@@ -42,7 +45,7 @@ GAME_BOOT_OFFSET EQU $0150
 ; store anything there.
 ; In the worst scenario, you will need to carefully move some code/data to
 ; other banks.
-BANK0_FREE_SPACE EQU $3fc0
+DEF BANK0_FREE_SPACE EQU $3fc0
 
 
 
@@ -56,7 +59,7 @@ BANK0_FREE_SPACE EQU $3fc0
 ; should be safe to use.
 ; In the worst scenario, use shadow OAM space. It will just glitch sprites for
 ; a single frame.
-WRAM0_FREE_SPACE EQU $cf40
+DEF WRAM0_FREE_SPACE EQU $cf40
 
 
 
@@ -64,8 +67,8 @@ WRAM0_FREE_SPACE EQU $cf40
 ; -----------------
 ; We need ~80 bytes (~0x50 bytes) to store our new battery-less save code.
 ; As stated above, they will be copied from ROM to WRAM0 when trying to save.
-BATTERYLESS_CODE_BANK EQU $7e
-BATTERYLESS_CODE_OFFSET EQU $4000
+DEF BATTERYLESS_CODE_BANK EQU $7e
+DEF BATTERYLESS_CODE_OFFSET EQU $4000
 
 
 
@@ -75,7 +78,7 @@ BATTERYLESS_CODE_OFFSET EQU $4000
 ; restore the correct bank when switching back from VBlank.
 ; We will reuse that byte when switching to our battery-less code bank and,
 ; afterwards, so we can restore to the previous bank.
-GAME_ENGINE_CURRENT_BANK_OFFSET EQU $fff8
+DEF GAME_ENGINE_CURRENT_BANK_OFFSET EQU $fff8
 
 
 
@@ -85,8 +88,7 @@ GAME_ENGINE_CURRENT_BANK_OFFSET EQU $fff8
 ; IMPORTANT: It must be an entire 64kb flashable block!
 ; If the game has not a free 64kb block, just use a bank bigger than the
 ; original ROM and RGBDS will expand the ROM and fix the header automatically.
-BANK_FLASH_DATA EQU $80
-
+DEF BANK_FLASH_DATA EQU $80
 
 
 
@@ -94,25 +96,7 @@ BANK_FLASH_DATA EQU $80
 ; ---------------------
 ; Set to 1 if you want to embed your own savegame to the Flash ROM.
 ; Place the savegame file as embed_savegame.sav in src directory.
-EMBED_SAVEGAME EQU 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+DEF EMBED_SAVEGAME EQU 1
 
 
 
