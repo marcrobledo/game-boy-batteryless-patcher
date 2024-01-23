@@ -1,8 +1,8 @@
 ; ------------------------------------------------------------------------------
-;                   Battery-less patch for Pokémon BW3: Genesis
-;         (find hack here: https://www.pokecommunity.com/threads/444114/)
+;                  Battery-less patch for Pokémon BW3: Genesis
+;        (find hack here: https://www.pokecommunity.com/threads/444114/)
 ;
-;      both settings.asm and embed_savegame.sav files must be placed at src/
+;                     put settings.asm in src/ and assemble
 ; ------------------------------------------------------------------------------
 
 
