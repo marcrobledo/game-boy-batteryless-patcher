@@ -32,6 +32,7 @@ Note: when saving, the game might freeze a few frames. This is normal, it's just
 
 
 
-To-do
------
-- fix for 32kb savegames see `main.asm`, `erase_and_write_ram_banks:` label.
+Examples
+--------
+You can find some `settings.asm` template examples for some ROM hacks and translations in `examples/` folder.<br/>
+Just replace the `src/settings.asm` files with any of them.
