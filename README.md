@@ -10,7 +10,7 @@ This [RGBDS](https://github.com/gbdev/rgbds) skeleton project allows you to crea
 It's based on [BennVennElectronic's tutorial](https://www.youtube.com/watch?v=l2bx-udTN84).<br/>
 All this does is to automate and ease the process by making the most of RGBDS's [RGBLINK overlaying features](https://rgbds.gbdev.io/docs/v0.7.0/rgblink.1#O).<br/>Still, Game Boy hardware and debugging knowledge is needed because user will need to find some offsets, free RAM sections, etc, where our new code will be stored.
 
-It's only compatible with WR/AAA/A9 cart types for now. But code should be easily scalable to other types if somebody does the reverse engineer needed for them.
+For now, it's only compatible with WR/AAA/A9 cart types and 64kb flashable sector size. But code should be easily scalable to other types if somebody does the reverse engineer needed for them.
 
 Thanks to BennVennElectronic and Lesserkuma for their help!
 
