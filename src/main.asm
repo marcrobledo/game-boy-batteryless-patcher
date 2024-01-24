@@ -4,8 +4,28 @@
 ; ------------------------------------------------------------------------------------
 ; see README file
 
+
 INCLUDE "hardware.inc" ;https://github.com/gbdev/hardware.inc
+INCLUDE "bootleg_types.inc"
 INCLUDE "settings.asm"
+
+
+; -------- BOOTLEG CARTRIDGE TYPE --------
+; Define your bootleg cartridge type.
+; Valid values (see bootleg_types.inc):
+; - WRAAAA9_64KB: WR/AAA/A9 cart type with 64kb (0x00010000) flashable sector size
+DEF BOOTLEG_CARTRIDGE_TYPE EQU WRAAAA9_64KB
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -37,27 +57,29 @@ _current_game_bank:
 
 ; ----------------- ROM -----------------
 ; hook game's boot and execute our boot_hook subroutine beforehand
-SECTION "ROM - Entry point", ROM0[$0100]
-nop
-;jp		boot_original
-jp		boot_hook
+IF DEF(GAME_BOOT_OFFSET)
+	SECTION "ROM - Entry point", ROM0[$0100]
+	nop
+	;jp		boot_original
+	jp		boot_hook
 
-
-
-SECTION "ROM - Original game boot", ROM0[GAME_BOOT_OFFSET]
-boot_original:
+	SECTION "ROM - Original game boot", ROM0[GAME_BOOT_OFFSET]
+	boot_original:
+ENDC
 
 SECTION "ROM - Bank 0 free space", ROM0[BANK0_FREE_SPACE]
-boot_hook:
-	;this will be run during boot, will copy savegame from Flash ROM to SRAM
-	push	af
-	ld		a, BANK(copy_save_flash_to_sram)
-	ld		[rROMB0], a
-	call	copy_save_flash_to_sram
-	ld		a, 1
-	ld		[rROMB0], a
-	pop		af
-	jp		boot_original
+IF DEF(GAME_BOOT_OFFSET)
+	boot_hook:
+		;this will be run during boot, will copy savegame from Flash ROM to SRAM
+		push	af
+		ld		a, BANK(copy_save_flash_to_sram)
+		ld		[rROMB0], a
+		call	copy_save_flash_to_sram
+		ld		a, 1
+		ld		[rROMB0], a
+		pop		af
+		jp		boot_original
+ENDC
 
 
 save_sram_to_flash:
@@ -230,9 +252,9 @@ erase_and_write_ram_banks:
 		;8kb-16kb
 		;edit subroutine directly in RAM, changing some values
 		ld		a, HIGH($6000)
-		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_offset - write_sram_to_flash_rom) + 2], a ;destination offset=$6000
+		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_offset - write_sram_to_flash_rom) + 2], a ;destination ROM offset=$6000
 		ld		a, 1
-		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_source_copy_bank - write_sram_to_flash_rom) + 1], a ;destination bank=1
+		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_source_copy_bank - write_sram_to_flash_rom) + 1], a ;source SRAM bank=1
 		call	WRAM0_FREE_SPACE
 		nop
 		REPT 7 - 1
@@ -242,11 +264,11 @@ erase_and_write_ram_banks:
 		;16kb-24kb
 		;edit subroutine directly in RAM, changing some values
 		ld		a, BANK_FLASH_DATA + 1
-		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_bank - write_sram_to_flash_rom) + 1], a ;source bank=BANK_FLASH_DATA + 1
+		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_bank - write_sram_to_flash_rom) + 1], a ;destination ROM bank=BANK_FLASH_DATA + 1
 		ld		a, HIGH($4000)
-		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_offset - write_sram_to_flash_rom) + 2], a ;destination offset=$4000
+		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_offset - write_sram_to_flash_rom) + 2], a ;destination ROM offset=$4000
 		ld		a, 2
-		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_source_copy_bank - write_sram_to_flash_rom) + 1], a ;destination bank=2
+		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_source_copy_bank - write_sram_to_flash_rom) + 1], a ;source SRAM bank=2
 		call	WRAM0_FREE_SPACE
 		nop
 		REPT 7 - 1
@@ -256,9 +278,9 @@ erase_and_write_ram_banks:
 		;24kb-32kb
 		;edit subroutine directly in RAM, changing some values
 		ld		a, HIGH($6000)
-		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_offset - write_sram_to_flash_rom) + 2], a ;destination offset=$6000
+		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_destination_offset - write_sram_to_flash_rom) + 2], a ;destination ROM offset=$6000
 		ld		a, 3
-		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_source_copy_bank - write_sram_to_flash_rom) + 1], a ;destination bank=3
+		ld		[WRAM0_FREE_SPACE + (write_sram_to_flash_rom.set_source_copy_bank - write_sram_to_flash_rom) + 1], a ;source SRAM bank=3
 		call	WRAM0_FREE_SPACE
 		nop
 	ENDC
