@@ -1,0 +1,8 @@
+use hard snowy version compiled from https://github.com/JustRegularLuna/rpp-backup/tree/c9170bc2d7624da09657bf7ca699907348e1c625
+
+set "_SNOW EQU 1" in constants.asm (this builds snowy roms)
+use pokeblue.gbc (this is the hard mode)
+
+
+TODO: test other combinations of snow/difficulty and official 3.0.2 release from here:
+https://github.com/JustRegularLuna/rpp-backup/tree/c9170bc2d7624da09657bf7ca699907348e1c625/patches
