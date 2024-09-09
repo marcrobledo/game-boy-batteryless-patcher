@@ -1,0 +1,1 @@
+use a file patched with CrystalClear_2_5_10_ColorFilter_1_1.bps as input rom
