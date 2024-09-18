@@ -30,7 +30,7 @@ DEF SRAM_SIZE_32KB EQU 1
 ; ----------------
 ; Put here the game's boot jp offset found in in 0:0101.
 ; Usually $0150, but could be different depending on game.
-DEF GAME_BOOT_OFFSET EQU $00BE
+DEF GAME_BOOT_OFFSET EQU $0383
 
 
 
@@ -45,7 +45,7 @@ DEF GAME_BOOT_OFFSET EQU $00BE
 ; store anything there.
 ; In the worst scenario, you will need to carefully move some code/data to
 ; other banks.
-DEF BANK0_FREE_SPACE EQU $0063
+DEF BANK0_FREE_SPACE EQU $63
 
 
 
@@ -61,14 +61,14 @@ DEF BANK0_FREE_SPACE EQU $0063
 ; a single frame.
 DEF WRAM0_FREE_SPACE EQU $c440 ;using Shadow OAM for now
 
-
+IF DEF(_BATTERYLESS)
 
 ; NEW CODE LOCATION
 ; -----------------
 ; We need ~80 bytes (~0x50 bytes) to store our new battery-less save code.
 ; As stated above, they will be copied from ROM to WRAM0 when trying to save.
-DEF BATTERYLESS_CODE_BANK EQU $3f
-DEF BATTERYLESS_CODE_OFFSET EQU $4000
+DEF BATTERYLESS_CODE_BANK EQU $7f
+DEF BATTERYLESS_CODE_OFFSET EQU $7a50
 
 
 
@@ -78,7 +78,7 @@ DEF BATTERYLESS_CODE_OFFSET EQU $4000
 ; restore the correct bank when switching back from VBlank.
 ; We will reuse that byte when switching to our battery-less code bank and,
 ; afterwards, so we can restore to the previous bank.
-DEF GAME_ENGINE_CURRENT_BANK_OFFSET EQU $ffb8
+DEF GAME_ENGINE_CURRENT_BANK_OFFSET EQU $ff9d
 
 
 
@@ -88,7 +88,7 @@ DEF GAME_ENGINE_CURRENT_BANK_OFFSET EQU $ffb8
 ; IMPORTANT: It must be an entire 64kb flashable block!
 ; If the game has not a free 64kb block, just use a bank bigger than the
 ; original ROM and RGBDS will expand the ROM and fix the header automatically.
-DEF BANK_FLASH_DATA EQU $40
+DEF BANK_FLASH_DATA EQU $80
 
 
 
@@ -104,20 +104,23 @@ DEF EMBED_SAVEGAME EQU 1
 ; ------------------------
 ; We need to find the original game's saving subroutine and hook our new code
 ; afterwards.
-; 6811 SaveSAV.save
-; 69E6 ChangeBox.save
-SECTION "Original SaveSAV.save call to SaveSAVtoSRAM", ROMX[$6811], BANK[$1C]
-;call	$692c ; SaveSAVtoSRAM
+; 51B4 SavedTheGame
+SECTION "Original call #1 to _SaveGameData", ROMX[$505D], BANK[$05]
+;call	$51dd ; _SaveGameData
 call	save_sram_hook
-SECTION "Original ChangeBox.save call to SaveSAVtoSRAM", ROMX[$69E6], BANK[$1C]
-;call	$692c ; SaveSAVtoSRAM
+SECTION "Original call #2 to _SaveGameData", ROMX[$507A], BANK[$05]
+;call	$51dd ; _SaveGameData
+call	save_sram_hook
+SECTION "Original call #3 to _SaveGameData", ROMX[$51B4], BANK[$05]
+;call	$51dd ; _SaveGameData
 call	save_sram_hook
 
-SECTION "Save SRAM hook", ROM0[$3ef0]
+SECTION "Save SRAM hook", ROM0[$00A0]
 save_sram_hook:
 	;original code
-	call	$692c ; SaveSAVtoSRAM
-	
+	call	$51dd ; _SaveGameData
 	;new code
 	call	save_sram_to_flash
 	ret
+
+ENDC

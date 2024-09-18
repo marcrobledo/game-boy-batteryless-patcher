@@ -34,5 +34,6 @@ Note: when saving, the game might freeze a few frames. This is normal, it's just
 
 Examples
 --------
-You can find some `settings.asm` template examples for some ROM hacks and translations in `examples/` folder.<br/>
-Just replace the `src/settings.asm` files with any of them.
+You can find `settings.asm` examples for some ROM hacks and translations in the `roms/` folder.<br/>
+Just create a new folder in `roms/` - if both a `settings.asm` and a `input.gbc`file are present, it will be build by `make`
+

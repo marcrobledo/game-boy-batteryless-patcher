@@ -6,3 +6,12 @@ use pokeblue.gbc (this is the hard mode)
 
 TODO: test other combinations of snow/difficulty and official 3.0.2 release from here:
 https://github.com/JustRegularLuna/rpp-backup/tree/c9170bc2d7624da09657bf7ca699907348e1c625/patches
+git clone https://github.com/JustRegularLuna/rpp-backup
+git checkout c9170bc2d7624da09657bf7ca699907348e1c625
+git clone https://github.com/gbdev/rgbds.git rgbds-0.5.2
+cd rgbds-0.5.2
+git checkout v0.5.2
+make
+cd ..
+# edit constants.asm for _SNOW EQU 1
+make RGBDS_DIR=rgbds-0.5.2/

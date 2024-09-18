@@ -1,8 +1,8 @@
 ; ------------------------------------------------------------------------------
-;                      Battery-less patch for Shin Pokémon
-;           (find hack here: hhttps://www.romhacking.net/hacks/8189/)
+;            Battery-less patch for Samurai Kid (english translation)
+;      (find translation here: https://www.romhacking.net/translations/6297/)
 ;
-;                     put settings.asm in src/ and assemble
+;      both settings.asm and embed_savegame.sav files must be placed at src/
 ; ------------------------------------------------------------------------------
 
 
@@ -15,14 +15,14 @@
 ; Uncomment the following constants if you want to manually specify cartridge
 ; type and/or size:
 ; DEF CHANGE_CART_TYPE EQU CART_ROM_MBC5_RAM_BAT
-; DEF CHANGE_CART_SIZE EQU CART_ROM_2048KB ;128 banks
+; DEF CHANGE_CART_SIZE EQU CART_ROM_1024KB ;64 banks
 
 
 
 ; SRAM ORIGINAL SIZE
 ; ------------------
 ; Set to 1 if game's original SRAM is 32kb
-DEF SRAM_SIZE_32KB EQU 1
+DEF SRAM_SIZE_32KB EQU 0
 
 
 
@@ -45,7 +45,7 @@ DEF GAME_BOOT_OFFSET EQU $0150
 ; store anything there.
 ; In the worst scenario, you will need to carefully move some code/data to
 ; other banks.
-DEF BANK0_FREE_SPACE EQU $0000
+DEF BANK0_FREE_SPACE EQU $3fc0
 
 
 
@@ -59,16 +59,16 @@ DEF BANK0_FREE_SPACE EQU $0000
 ; should be safe to use.
 ; In the worst scenario, use shadow OAM space. It will just glitch sprites for
 ; a single frame.
-DEF WRAM0_FREE_SPACE EQU $c340 ;using Shadow OAM for now
+DEF WRAM0_FREE_SPACE EQU $c800
 
-
+IF DEF(_BATTERYLESS)
 
 ; NEW CODE LOCATION
 ; -----------------
 ; We need ~80 bytes (~0x50 bytes) to store our new battery-less save code.
 ; As stated above, they will be copied from ROM to WRAM0 when trying to save.
 DEF BATTERYLESS_CODE_BANK EQU $3f
-DEF BATTERYLESS_CODE_OFFSET EQU $7b00
+DEF BATTERYLESS_CODE_OFFSET EQU $4000
 
 
 
@@ -78,7 +78,7 @@ DEF BATTERYLESS_CODE_OFFSET EQU $7b00
 ; restore the correct bank when switching back from VBlank.
 ; We will reuse that byte when switching to our battery-less code bank and,
 ; afterwards, so we can restore to the previous bank.
-DEF GAME_ENGINE_CURRENT_BANK_OFFSET EQU $ffb9
+DEF GAME_ENGINE_CURRENT_BANK_OFFSET EQU $ffaa
 
 
 
@@ -96,7 +96,7 @@ DEF BANK_FLASH_DATA EQU $40
 ; ---------------------
 ; Set to 1 if you want to embed your own savegame to the Flash ROM.
 ; Place the savegame file as embed_savegame.sav in src directory.
-DEF EMBED_SAVEGAME EQU 0
+DEF EMBED_SAVEGAME EQU 1
 
 
 
@@ -104,15 +104,22 @@ DEF EMBED_SAVEGAME EQU 0
 ; ------------------------
 ; We need to find the original game's saving subroutine and hook our new code
 ; afterwards.
-SECTION "Original save SRAM subroutine end", ROMX[$7a06],BANK[$1c]
-;call    $7939
-call    save_sram_hook
+SECTION "Original save SRAM subroutine end", ROM0[$322a]
+;ld		[$0000], a
+call	save_sram_hook
 ret
 
-SECTION "Save SRAM hook", ROMX[$7ff0],BANK[$1c]
+SECTION "Save SRAM hook", ROM0[$3f80]
 save_sram_hook:
-    ;original code
-    call    $7939
-    
-    ;new code
-    jp    save_sram_to_flash
+	;original code
+	ld		[$0000], a
+	
+	;new code
+	call	save_sram_to_flash
+
+	;original code, again, just in case
+	xor		a
+	ld		[$0000], a
+	ret
+
+ENDC

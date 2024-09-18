@@ -1,6 +1,6 @@
 ; ------------------------------------------------------------------------------
-;                  Battery-less patch for Pokémon BW3: Genesis
-;        (find hack here: https://www.pokecommunity.com/threads/444114/)
+;             Battery-less patch for Pokémon Crystal Ultimate v1.0.7
+;        (find hack here: https://www.pokecommunity.com/threads/441959/)
 ;
 ;                     put settings.asm in src/ and assemble
 ; ------------------------------------------------------------------------------
@@ -61,14 +61,14 @@ DEF BANK0_FREE_SPACE EQU $3fc0
 ; a single frame.
 DEF WRAM0_FREE_SPACE EQU $c440 ;using Shadow OAM for now
 
-
+IF DEF(_BATTERYLESS)
 
 ; NEW CODE LOCATION
 ; -----------------
 ; We need ~80 bytes (~0x50 bytes) to store our new battery-less save code.
 ; As stated above, they will be copied from ROM to WRAM0 when trying to save.
 DEF BATTERYLESS_CODE_BANK EQU $7f
-DEF BATTERYLESS_CODE_OFFSET EQU $7eb0
+DEF BATTERYLESS_CODE_OFFSET EQU $7b00
 
 
 
@@ -104,14 +104,16 @@ DEF EMBED_SAVEGAME EQU 0
 ; ------------------------
 ; We need to find the original game's saving subroutine and hook our new code
 ; afterwards.
-SECTION "Original save SRAM subroutine end", ROMX[$4b53], BANK[5]
-;call	$4b7c
+SECTION "Original save SRAM subroutine end", ROMX[$4acd], BANK[5]
+;call	$4af6
 call	save_sram_hook
 
 SECTION "Save SRAM hook", ROMX[$7ff8], BANK[5]
 save_sram_hook:
 	;original code
-	call	$4b7c
+	call	$4af6
 	
 	;new code
 	jp	save_sram_to_flash
+
+ENDC
