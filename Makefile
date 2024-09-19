@@ -1,5 +1,5 @@
 # Makefile specific
-.PHONY: clean all patches_batteryless
+.PHONY: clean all
 .SECONDEXPANSION:
 
 ifneq ($(wildcard rgbds/.*),)
@@ -11,6 +11,13 @@ RGBASM  ?= $(RGBDS)rgbasm
 RGBFIX  ?= $(RGBDS)rgbfix
 RGBGFX  ?= $(RGBDS)rgbgfx
 RGBLINK ?= $(RGBDS)rgblink
+
+# Build tools when building the rom.
+# This has to happen before the rules are processed, since that's when scan_includes is run.
+ifeq (,$(filter clean tools,$(MAKECMDGOALS)))
+$(info $(shell $(MAKE) -C tools))
+endif
+
 
 # get targets - every roms/* subdir with a input.gbc present
 targets = $(patsubst %/, %, $(subst roms/, , $(dir $(wildcard roms/*/input.gbc))))
@@ -24,6 +31,8 @@ all: patches_batteryless
 
 patches_batteryless: $(roms_batteryless:.gbc=.bps)
 
+tools:
+	$(MAKE) -C tools/
 
 # Create a sym/map for debug purposes if `make` run with `DEBUG=1`
 ifeq ($(DEBUG),1)
@@ -41,9 +50,8 @@ $(roms:.gbc=.bps): $$(patsubst %.bps,%.gbc,$$@)
 $(roms): $$(patsubst %.gbc,%.o,$$@)
 	$(RGBLINK) $(RGBLINKFLAGS) -O $(@D)/input.gbc -o $@ $<
 	$(RGBFIX) -p0 -v $@
-	$(RM) $<
 
-$(roms:.gbc=.o): $$(@D)/settings.asm src/main.asm
+$(roms:.gbc=.o): $$(@D)/settings.asm src/main.asm $$(shell tools/scan_includes $$(@D)/settings.asm) $$(shell tools/scan_includes src/main.asm)
 	$(RGBASM) $(RGBASMFLAGS) -o $@ --preinclude $< src/main.asm
 
 
@@ -53,4 +61,5 @@ clean:
 	$(roms:.gbc=.sym) \
 	$(roms:.gbc=.map) \
 	$(roms:.gbc=.o)
+	$(MAKE) clean -C tools/
 

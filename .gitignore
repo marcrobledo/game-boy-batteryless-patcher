@@ -1,6 +1,9 @@
 # ignore local rgbds
 rgbds/*
 
+# ignore scan_includes
+tools/scan_includes
+
 # compiled objects
 *.o
 
