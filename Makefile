@@ -27,9 +27,15 @@ $(shell grep -o "^IF DEF(_BATTERYLESS)" roms/${targetdir}/settings.asm >/dev/nul
 
 roms = $(roms_batteryless)
 
+ifeq (,$(shell command -v flips))
+all: roms_batteryless
+else
 all: patches_batteryless
+endif
 
 patches_batteryless: $(roms_batteryless:.gbc=.bps)
+
+roms_batteryless: $(roms_batteryless)
 
 tools:
 	$(MAKE) -C tools/
