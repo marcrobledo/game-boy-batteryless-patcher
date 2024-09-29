@@ -1,5 +1,5 @@
-/rgbds/*
-!/rgbds/place rgbds here.txt
+# ignore local rgbds
+rgbds/*
 
 # compiled objects
 *.o

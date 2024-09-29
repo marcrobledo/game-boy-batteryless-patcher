@@ -2,6 +2,10 @@
 .PHONY: clean all patches_batteryless
 .SECONDEXPANSION:
 
+ifneq ($(wildcard rgbds/.*),)
+RGBDS = rgbds/
+endif
+
 RGBDS ?=
 RGBASM  ?= $(RGBDS)rgbasm
 RGBFIX  ?= $(RGBDS)rgbfix

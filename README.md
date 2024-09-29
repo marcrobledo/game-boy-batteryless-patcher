@@ -19,11 +19,11 @@ Thanks to BennVennElectronic and Lesserkuma for their help!
 
 How to
 ------
-1. Get [RGBDS](https://rgbds.gbdev.io/install) and unzip it at `rgbds` folder.
-2. Place the game you are going to patch as `roms/input.gbc` file.
-3. Read `src/settings.asm` carefully and edit it, filling all needed offsets and constants for your game.
-4. Compile with `assemble.bat` (Windows) or `assemble.sh` (Unix).
-5. If there were no errors, a ROM `roms/output.gbc` will be created.
+1. Install rgbds, get [RGBDS](https://rgbds.gbdev.io/install) and unzip it at `rgbds` folder or specify your rgbds folder using `RGBDS=../rgbds/ make`
+2. Place the game you are going to patch as `roms/"romname"/input.gbc` file.
+3. Copy one of the example `settings.asm` files to your new `roms/"romname"` directory and carefully edit it, filling all needed offsets and constants for your game.
+4. Compile with `make`.
+5. If there were no errors, a ROM  will be created in the same folder as the input.gbc.
 6. Flash your bootleg cartridge with the new generated ROM.
 
 Note: when saving, the game might freeze a few frames. This is normal, it's just the cheap Flash ROM chip doing its magic!
@@ -36,4 +36,3 @@ Examples
 --------
 You can find `settings.asm` examples for some ROM hacks and translations in the `roms/` folder.<br/>
 Just create a new folder in `roms/` - if both a `settings.asm` and a `input.gbc`file are present, it will be build by `make`
-
