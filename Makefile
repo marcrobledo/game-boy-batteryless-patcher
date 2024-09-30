@@ -20,10 +20,12 @@ endif
 
 
 # get targets - every roms/* subdir with a input.gbc present
-targets = $(patsubst %/, %, $(subst roms/, , $(dir $(wildcard roms/*/input.gbc))))
+# targets = $(patsubst %/, %, $(subst roms/, , $(dir $(wildcard roms/*/input.gbc))))
+# targets = $(shell for dir in roms/*/*/settings.asm; do echo $$dir | cut -d "/" -f 3;done)
+targets = $(shell for dir in roms/*/*/settings.asm; do [ -e "$$(dirname $$dir)/$$(echo $$dir | cut -d '/' -f 3).gbc" ] && echo $$(dirname $$dir);done)
 
 roms_batteryless = $(foreach targetdir, ${targets}, \
-$(shell grep -o "^IF DEF(_BATTERYLESS)" roms/${targetdir}/settings.asm >/dev/null && echo "roms/${targetdir}/${targetdir}_batteryless.gbc"))
+$(shell grep -o "^IF DEF(_BATTERYLESS)" ${targetdir}/settings.asm >/dev/null && echo "${targetdir}/$(shell echo ${targetdir} | cut -d '/' -f 3 )_batteryless.gbc"))
 
 roms = $(roms_batteryless)
 
@@ -51,10 +53,10 @@ $(roms_batteryless:.gbc=.o): RGBASMFLAGS += -D_BATTERYLESS
 
 
 $(roms:.gbc=.bps): $$(patsubst %.bps,%.gbc,$$@)
-	flips --create --bps $(@D)/input.gbc $< $@
+	flips --create --bps $(@D)/$(shell echo $(@D) | cut -d '/' -f 3).gbc $< $@
 
 $(roms): $$(patsubst %.gbc,%.o,$$@)
-	$(RGBLINK) $(RGBLINKFLAGS) -O $(@D)/input.gbc -o $@ $<
+	$(RGBLINK) $(RGBLINKFLAGS) -O $(@D)/$(shell echo $(@D) | cut -d '/' -f 3).gbc -o $@ $<
 	$(RGBFIX) -p0 -v $@
 
 $(roms:.gbc=.o): $$(@D)/settings.asm src/main.asm $$(shell tools/scan_includes $$(@D)/settings.asm) $$(shell tools/scan_includes src/main.asm)
