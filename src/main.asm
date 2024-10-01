@@ -411,16 +411,16 @@ write_sram_to_flash_rom:
 write_sram_to_flash_rom_end:
 
 
-
-
-
+IF !DEF(EMBED_SAVEGAME)
+    DEF EMBED_SAVEGAME EQUS "\"src/empty_savegame.sav\""
+ENDC
 ; ----------- Embed savegame ------------
-IF EMBED_SAVEGAME
+IF DEF(EMBED_SAVEGAME)
 	SECTION "Flash ROM - Embed savegame (first 16kb)", ROMX[$4000], BANK[BANK_FLASH_DATA]
-	INCBIN "src/embed_savegame.sav", 0, 8192
+	INCBIN EMBED_SAVEGAME, 0, 8192
 	IF SRAM_SIZE_32KB
-		INCBIN "src/embed_savegame.sav", 8192, 8192
+		INCBIN EMBED_SAVEGAME, 8192, 8192
 		SECTION "Flash ROM - Embed savegame (last 16kb)", ROMX[$4000], BANK[BANK_FLASH_DATA + 1]
-		INCBIN "src/embed_savegame.sav", 16384, 16384
+		INCBIN EMBED_SAVEGAME, 16384, 16384
 	ENDC
 ENDC

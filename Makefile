@@ -59,7 +59,14 @@ $(roms): $$(patsubst %.gbc,%.o,$$@)
 	$(RGBLINK) $(RGBLINKFLAGS) -O $(@D)/$(shell echo $(@D) | cut -d '/' -f 3).gbc -o $@ $<
 	$(RGBFIX) -p0 -v $@
 
-$(roms:.gbc=.o): $$(@D)/settings.asm src/main.asm $$(shell tools/scan_includes $$(@D)/settings.asm) $$(shell tools/scan_includes src/main.asm)
+define SAVEFILE_RGBASMFLAGS
+ifneq ("$(wildcard $(savefile))","")
+$(savefile:.sav=.o):  RGBASMFLAGS += -DEMBED_SAVEGAME=\"$(subst _batteryless,,$(savefile))\"
+endif
+endef
+$(foreach savefile,$(roms_batteryless:.gbc=.sav), $(eval $(SAVEFILE_RGBASMFLAGS) ))
+
+$(roms:.gbc=.o): $$(@D)/settings.asm src/main.asm $$(shell tools/scan_includes $$(@D)/settings.asm) $$(shell tools/scan_includes src/main.asm 2>/dev/null) $$(wildcard $$(subst _batteryless.o,.sav,$$@))
 	$(RGBASM) $(RGBASMFLAGS) -o $@ --preinclude $< src/main.asm
 
 

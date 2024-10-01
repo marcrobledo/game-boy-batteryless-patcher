@@ -94,9 +94,8 @@ DEF BANK_FLASH_DATA EQU $40
 
 ; EMBED CUSTOM SAVEGAME
 ; ---------------------
-; Set to 1 if you want to embed your own savegame to the Flash ROM.
-; Place the savegame file as embed_savegame.sav in src directory.
-DEF EMBED_SAVEGAME EQU 0
+; Just place a sav file next to the input ROM - with the extension .sav instead of .gbc
+; If a sav file is present, it will be included into the batteryless ROM.
 
 
 

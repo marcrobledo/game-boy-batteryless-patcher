@@ -21,10 +21,11 @@ How to
 ------
 1. Install rgbds, get [RGBDS](https://rgbds.gbdev.io/install) and unzip it at `rgbds` folder or specify your rgbds folder using `RGBDS=../rgbds/ make`
 2. Place the game you are going to patch as `roms/"category"/"romname"/"romname".gbc` file. The last folder and the ROM must have the same name.
-3. Copy one of the example `settings.asm` files to your new `roms/"category"/"romname"` directory and carefully edit it, filling all needed offsets and constants for your game.
-4. Compile with `make`.
-5. If there were no errors, a ROM  will be created in the same folder as the input.gbc.
-6. Flash your bootleg cartridge with the new generated ROM.
+3. Optional: If a savegame of the game exists at `roms/"category"/"romname"/"romname".sav` then it will be included into the batteryless ROM.
+4. Copy one of the example `settings.asm` files to your new `roms/"category"/"romname"` directory and carefully edit it, filling all needed offsets and constants for your game.
+5. Compile with `make`.
+6. If there were no errors, a ROM  will be created in the same folder as the input.gbc.
+7. Flash your bootleg cartridge with the new generated ROM.
 
 Note: when saving, the game might freeze a few frames. This is normal, it's just the cheap Flash ROM chip doing its magic!
 
