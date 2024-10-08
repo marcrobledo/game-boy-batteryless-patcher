@@ -1,4 +1,37 @@
-/rgbds/*
-!/rgbds/place rgbds here.txt
-/roms/*
-!/roms/place original rom here.txt
+# ignore local rgbds
+rgbds/*
+
+# ignore scan_includes
+tools/scan_includes
+
+# compiled objects
+*.o
+
+# compiled roms
+*.gbc
+*.gb
+*.patch
+*.bps
+
+# rgbds extras
+*.map
+*.sym
+
+# save game files
+*.sgm
+*.sav
+*.rtc
+*.sn*
+*.sa*
+*.sg1
+
+# vim configuration
+# http://www.vim.org/scripts/script.php?script_id=441
+.lvimrc
+
+# swap files for vim and gedit
+.*.swp
+*~
+
+# macos files
+.DS_STORE

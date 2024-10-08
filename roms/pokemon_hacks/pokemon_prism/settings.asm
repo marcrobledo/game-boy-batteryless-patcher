@@ -1,6 +1,6 @@
 ; ------------------------------------------------------------------------------
-;             Battery-less patch for Pokémon Crystal Ultimate v1.0.7
-;        (find hack here: https://www.pokecommunity.com/threads/441959/)
+;                Battery-less patch for Pokémon Prism (v0.95.0254)
+;             (find hack here: https://rainbowdevs.com/title/prism/)
 ;
 ;                     put settings.asm in src/ and assemble
 ; ------------------------------------------------------------------------------
@@ -24,13 +24,33 @@
 ; Set to 1 if game's original SRAM is 32kb
 DEF SRAM_SIZE_32KB EQU 1
 
-
+IF DEF(_BATTERYLESS)
 
 ; GAME BOOT OFFSET
 ; ----------------
-; Put here the game's boot jp offset found in in 0:0101.
-; Usually $0150, but could be different depending on game.
-DEF GAME_BOOT_OFFSET EQU $016e
+; we are not defining GAME_BOOT_OFFSET, we are coding our custom hook for the
+; entry point, since this hack does not use the common nop+jp entry point
+SECTION "ROM - Entry point", ROM0[$0100]
+; original code
+; ldh		[$ffe6], a
+; jr		$016c
+nop
+jp		boot_hook
+
+SECTION "ROM - Custom entry point", ROM0[$3fa0]
+boot_hook:
+	;this will be run during boot, will copy savegame from Flash ROM to SRAM
+	push	af
+	ld		a, BANK(copy_save_flash_to_sram)
+	ld		[rROMB0], a
+	call	copy_save_flash_to_sram
+	ld		a, 1
+	ld		[rROMB0], a
+	pop		af
+
+	;original entry point code
+	ldh		[$ffe6], a	
+	jp		$016c
 
 
 
@@ -68,7 +88,7 @@ DEF WRAM0_FREE_SPACE EQU $c440 ;using Shadow OAM for now
 ; We need ~80 bytes (~0x50 bytes) to store our new battery-less save code.
 ; As stated above, they will be copied from ROM to WRAM0 when trying to save.
 DEF BATTERYLESS_CODE_BANK EQU $7f
-DEF BATTERYLESS_CODE_OFFSET EQU $7b00
+DEF BATTERYLESS_CODE_OFFSET EQU $7eb0
 
 
 
@@ -94,9 +114,8 @@ DEF BANK_FLASH_DATA EQU $80
 
 ; EMBED CUSTOM SAVEGAME
 ; ---------------------
-; Set to 1 if you want to embed your own savegame to the Flash ROM.
-; Place the savegame file as embed_savegame.sav in src directory.
-DEF EMBED_SAVEGAME EQU 0
+; Just place a sav file next to the input ROM - with the extension .sav instead of .gbc
+; If a sav file is present, it will be included into the batteryless ROM.
 
 
 
@@ -104,14 +123,16 @@ DEF EMBED_SAVEGAME EQU 0
 ; ------------------------
 ; We need to find the original game's saving subroutine and hook our new code
 ; afterwards.
-SECTION "Original save SRAM subroutine end", ROMX[$4acd], BANK[5]
-;call	$4af6
+SECTION "Original save SRAM subroutine end", ROMX[$4d71], BANK[5]
+;call	$4df3
 call	save_sram_hook
 
 SECTION "Save SRAM hook", ROMX[$7ff8], BANK[5]
 save_sram_hook:
 	;original code
-	call	$4af6
+	call	$4df3
 	
 	;new code
 	jp	save_sram_to_flash
+
+ENDC

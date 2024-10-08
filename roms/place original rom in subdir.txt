@@ -1,0 +1,1 @@
+place original ROM as "input.gbc" in the fitting subdirectory
